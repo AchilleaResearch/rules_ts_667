@@ -1,0 +1,47 @@
+module(
+    name = "rules_ts_667_repro",
+    repo_name = "rules_ts_667_repro",
+)
+
+bazel_dep(name = "aspect_rules_js", version = "2.0.0")
+git_override(
+    module_name = "aspect_rules_js",
+    commit = "521914e3286f7eab274fcaf0323ff355d0b62b0b",
+    patches = [
+        # TODO(https://github.com/aspect-build/rules_js/issues/1739,
+        #  https://github.com/aspect-build/bazel-lib/issues/848): bsdtar.exe
+        #  fails on Windows due to libarchive not statically compiling libcrypto
+        #  into its distributable. For now, in order to unpack npm packages on
+        #  Windows, we use a system bsdtar.exe when on Windows.
+        "//:rules_js.system_bsdtar.patch",
+    ],
+    remote = "https://github.com/aspect-build/rules_js.git",
+)
+
+bazel_dep(name = "rules_nodejs", version = "6.2.0")
+
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
+node.toolchain(node_version = "18.19.0")
+
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm", dev_dependency = True)
+npm.npm_translate_lock(
+    name = "npm",
+    pnpm_lock = "//:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.bazelignore",
+)
+use_repo(npm, "npm")
+
+bazel_dep(
+    name = "aspect_rules_ts",
+    version = "3.0.0",
+)
+git_override(
+    module_name = "aspect_rules_ts",
+    commit = "da284adac1fcb6bd9da81ce5d4b3e29660ecface",
+    patches = [
+        # TODO(https://github.com/aspect-build/rules_ts/issues/667): This patch
+        #  fixes #667 and can be removed to demonstrate the issue.
+        "//:rules_ts.667.patch",
+    ],
+    remote = "https://github.com/aspect-build/rules_ts",
+)
