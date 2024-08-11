@@ -1,3 +1,8 @@
 syntax = "proto3";
 package foo;
-message Foo {}
+
+import "bar.proto";
+
+message Foo {
+    bar.Bar bar = 1;
+}

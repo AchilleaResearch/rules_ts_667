@@ -42,6 +42,9 @@ git_override(
         # TODO(https://github.com/aspect-build/rules_ts/issues/667): This patch
         #  fixes #667 and can be removed to demonstrate the issue.
         "//:rules_ts.667.patch",
+        # TODO(https://github.com/aspect-build/rules_ts/issues/670): This patch
+        #  fixes #670 and can be removed to demonstrate the issue.
+        "//:rules_ts.670.patch",
     ],
     remote = "https://github.com/aspect-build/rules_ts",
 )
